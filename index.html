@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Certificados - Efapp</title>
+    <link href="favicon.jpeg" rel="icon">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            color: #333;
+            background: linear-gradient(to right, rgba(238, 235, 235, 0.7), rgba(233, 229, 229, 0.7)), url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            min-height: 100vh;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .logo {
+            margin: 50px auto 20px;
+            max-width: 100%;
+            width: 800px;
+            padding: 0 15px;
+        }
+
+        h2 {
+            color: #000;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .search-options {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .search-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .search-option input {
+            margin: 0;
+        }
+
+        .search-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0 30px;
+            gap: 10px;
+        }
+
+        #search-input {
+            padding: 12px 15px;
+            width: 300px;
+            max-width: 100%;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            flex-grow: 1;
+        }
+
+        #search-btn {
+            padding: 12px 25px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            min-height: 44px;
+            transition: background-color 0.3s;
+            flex-shrink: 0;
+        }
+
+        #search-btn:hover {
+            background-color: #45a049;
+        }
+
+        .error {
+            color: #d32f2f;
+            margin: 15px 0;
+            font-weight: bold;
+            padding: 10px;
+            background-color: rgba(255, 235, 238, 0.7);
+            border-radius: 4px;
+        }
+
+        .success {
+            color: #388e3c;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 10px;
+            background-color: rgba(232, 245, 233, 0.7);
+            border-radius: 4px;
+        }
+
+        .student-info {
+            margin: 15px auto;
+            font-size: 16px;
+            text-align: center;
+            color: #000;
+            font-weight: bold;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            max-width: 800px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 20px 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0 auto;
+            background-color: #fff;
+            color: #000;
+            text-align: center;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        th {
+            background-color: #058120;
+            color: white;
+            padding: 12px;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f8f8;
+        }
+
+        tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .verify-btn {
+            display: inline-block;
+            background-color: #058120;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s;
+            min-width: 120px;
+        }
+
+        .verify-btn:hover {
+            background-color: #046a1a;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            .logo {
+                margin-top: 30px;
+                width: 100%;
+            }
+            
+            h2 {
+                font-size: 20px;
+            }
+            
+            .search-options {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .search-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            #search-input, #search-btn {
+                width: 100%;
+                max-width: 400px;
+            }
+            
+            .student-info {
+                padding: 12px;
+                font-size: 15px;
+            }
+            
+            table {
+                font-size: 14px;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .logo {
+                margin-top: 20px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+            
+            #search-input, #search-btn {
+                font-size: 15px;
+                padding: 10px 12px;
+            }
+            
+            .student-info {
+                font-size: 14px;
+                padding: 10px;
+            }
+            
+            table {
+                font-size: 13px;
+            }
+            
+            th, td {
+                padding: 8px 6px;
+            }
+            
+            .verify-btn {
+                padding: 6px 12px;
+                min-width: 100px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            table {
+                font-size: 12px;
+            }
+            
+            th, td {
+                padding: 6px 4px;
+            }
+        }
+
+        @media screen and (max-width: 767px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <img src="logo.png" alt="Logo" class="logo">
+
+    <h2>Buscar certificados de estudiante</h2>
+
+    <div class="search-options">
+        <div class="search-option">
+            <input type="radio" id="search-dni" name="search-type" value="dni" checked>
+            <label for="search-dni">Buscar por DNI</label>
+        </div>
+        <div class="search-option">
+            <input type="radio" id="search-name" name="search-type" value="name">
+            <label for="search-name">Buscar por Nombre</label>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Ingrese DNI del estudiante" maxlength="8" pattern="\d{8}" required>
+        <button id="search-btn">Buscar</button>
+    </div>
+
+    <div id="message" class=""></div>
+
+    <div id="student-info" class="student-info" style="display: none;"></div>
+
+    <div class="table-container">
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Curso</th>
+                    <th>Carga Horaria</th>
+                    <th>Fecha del Curso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="results-body">
+                <!-- Los resultados se insertarán aquí dinámicamente -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const estudiantes = {
+            "48232236": {
+                nombre: "JORDY VICTOR ROJAS TORRES",
+                cursos: [
+                    {
+                        nombre: "Introducción a la Programación",
+                        cargaHoraria: 40,
+                        fecha: "15/03/2023",
+                        enlaceCertificado: "https://drive.google.com/file/d/1Ejemplo1/view?usp=sharing"
+                    },
+                    {
+                        nombre: "Diseño Web Avanzado",
+                        cargaHoraria: 60,
+                        fecha: "10/06/2023",
+                        enlaceCertificado: "https://drive.google.com/file/d/2Ejemplo2/view?usp=sharing"
+                    }
+                ]
+            },
+            "70064034": {
+                nombre: "MARY LUZ HUAMANI YAURICASA",
+                cursos: [
+                    {
+                        nombre: "FARMACOLOGÍA Y ENFERMERÍA",
+                        cargaHoraria: 120,
+                        fecha: "20/06/2025",
+                        enlaceCertificado: "https://drive.google.com/file/d/6Ejemplo6/view?usp=sharing"
+                    },
+                    {
+                        nombre: "SALUD OCUPACIONAL",
+                        cargaHoraria: 120,
+                        fecha: "30/04/2025",
+                        enlaceCertificado: "https://drive.google.com/file/d/7Ejemplo7/view?usp=sharing"
+                    },
+                    {
+                        nombre: "REDES INFORMÁTICAS Y DESARROLLO WEB",
+                        cargaHoraria: 120,
+                        fecha: "28/02/2025",
+                        enlaceCertificado: "https://drive.google.com/file/d/8Ejemplo8/view?usp=sharing"
+                    },
+                    {
+                        nombre: "TELEMEDICINA",
+                        cargaHoraria: 120,
+                        fecha: "30/12/2024",
+                        enlaceCertificado: "https://drive.google.com/file/d/5Ejemplo5/view?usp=sharing"
+                    },
+                    {
+                        nombre: "SALUD PÚBLICA",
+                        cargaHoraria: 120,
+                        fecha: "31/10/2024",
+                        enlaceCertificado: "https://drive.google.com/file/d/4Ejemplo4/view?usp=sharing"
+                    },
+                    {
+                        nombre: "PRIMEROS AUXILIOS",
+                        cargaHoraria: 120,
+                        fecha: "31/08/2024",
+                        enlaceCertificado: "https://drive.google.com/file/d/3Ejemplo3/view?usp=sharing"
+                    },
+                     
+                    
+                ]
+            },
+            "48563940": {
+                nombre: "JORGE LUIS HUAMANI YAURICASA",
+                cursos: [
+                    {
+                        nombre: "PREPARACIÓN DE BIOL Y ABONO ORGÁNICO FERMENTADO",
+                        cargaHoraria: 80,
+                        fecha: "22/07/2024",
+                        enlaceCertificado: "https://drive.google.com/file/d/1aEDqpwV2DTl4zCz02wXu9p5J6v0sE0yM/view?usp=sharing"
+                    },
+                    {
+                        nombre: "DISEÑO, MANEJO Y CONSTRUCCION DE INVERNADEROS Y FITOTOLDOS",
+                        cargaHoraria: 80,
+                        fecha: "19/07/2024",
+                        enlaceCertificado: "https://drive.google.com/file/d/1hToappmjHVxd94rAHimaNIjLq_4wKQQC/view?usp=sharing"
+                    },
+                    {
+                        nombre: "INNOVACIÓN Y SOSTENIBILIDAD EN LOS BIOHUERTOS FAMILIARES",
+                        cargaHoraria: 80,
+                        fecha: "22/04/2024",
+                        enlaceCertificado: "https://drive.google.com/file/d/1JPmLe-1WZsJVmQB62hAMRmzah1Xe1HbD/view?usp=sharing"
+                    },
+                    {
+                        nombre: "PASTOS Y FORRAJES",
+                        cargaHoraria: 80,
+                        fecha: "29/05/2023",
+                        enlaceCertificado: "https://drive.google.com/file/d/1de0A47zlJ4J0QoJHyO1S7sElfYx-418F/view?usp=sharing"
+                    },
+                    {
+                        nombre: "SANIDAD ANIMAL",
+                        cargaHoraria: 80,
+                        fecha: "19/05/2023",
+                        enlaceCertificado: "https://drive.google.com/file/d/13zaZb_rQjxAf2TqTQCBWWbArzKyWryxw/view?usp=sharing"
+                    },
+                    {
+                        nombre: "RIEGO TECNIFICADO",
+                        cargaHoraria: 80,
+                        fecha: "11/04/2023",
+                        enlaceCertificado: "https://drive.google.com/file/d/1kzUXv5J0Wuh2VGSyCPAP1eyiO7306THO/view?usp=sharing"
+                    }
+                ]
+            }
+        };
+
+        function buscarPorNombre(nombreBuscado) {
+            nombreBuscado = nombreBuscado.toUpperCase().trim();
+            
+            // Primero buscamos coincidencia exacta
+            for (const dni in estudiantes) {
+                if (estudiantes[dni].nombre === nombreBuscado) {
+                    return dni;
+                }
+            }
+            
+             // Si no hay exacta, buscamos que el nombre buscado coincida con el INICIO del nombre completo
+            for (const dni in estudiantes) {
+                if (estudiantes[dni].nombre.startsWith(nombreBuscado)) {
+                    return dni;
+                }
+            }
+            
+            return null;
+        }
+
+        function updateSearchPlaceholder() {
+            const searchType = document.querySelector('input[name="search-type"]:checked').value;
+            const searchInput = document.getElementById('search-input');
+
+            // Limpiar el campo de búsqueda
+            searchInput.value = '';
+            
+            
+            if (searchType === 'dni') {
+                searchInput.placeholder = "Ingrese DNI del estudiante (8 dígitos)";
+                searchInput.maxLength = 8;
+                searchInput.pattern = "\\d{8}";
+            } else {
+                searchInput.placeholder = "Ingrese nombre completo del estudiante";
+                searchInput.removeAttribute('maxLength');
+                searchInput.removeAttribute('pattern');
+            }
+        }
+
+        function searchCertificates() {
+            const searchType = document.querySelector('input[name="search-type"]:checked').value;
+            const searchValue = document.getElementById('search-input').value.trim();
+            const messageDiv = document.getElementById('message');
+            const studentInfoDiv = document.getElementById('student-info');
+            const table = document.getElementById('results-table');
+            const tbody = document.getElementById('results-body');
+
+            
+
+            // Limpiar mensajes y resultados anteriores
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+            studentInfoDiv.style.display = 'none';
+            studentInfoDiv.textContent = '';
+            tbody.innerHTML = '';
+            table.style.display = 'none';
+
+            // Validar que se haya ingresado un valor
+            if (!searchValue) {
+                messageDiv.textContent = searchType === 'dni' 
+                    ? 'Por favor, ingrese un DNI válido de 8 dígitos.' 
+                    : 'Por favor, ingrese el nombre completo del estudiante.';
+                messageDiv.className = 'error';
+                return;
+            }
+
+            let dni = '';
+            
+            if (searchType === 'dni') {
+                // Validar formato de DNI (8 dígitos)
+                if (!/^\d{8}$/.test(searchValue)) {
+                    messageDiv.textContent = 'El DNI debe contener exactamente 8 dígitos numéricos.';
+                    messageDiv.className = 'error';
+                    return;
+                }
+                dni = searchValue;
+            } else {
+                // Búsqueda por nombre (requiere nombre completo o casi completo)
+                dni = buscarPorNombre(searchValue);
+                
+                if (!dni) {
+                    messageDiv.textContent = 'No se encontraron coincidencias. Por favor ingrese el nombre completo exacto.';
+                    messageDiv.className = 'error';
+                    return;
+                }
+            }
+
+            // Verificar si encontramos un DNI válido
+            if (dni && estudiantes.hasOwnProperty(dni)) {
+                const estudiante = estudiantes[dni];
+                const cursos = estudiante.cursos;
+
+                // Mostrar información del estudiante
+                studentInfoDiv.textContent = `Resultados encontrados para el estudiante: ${estudiante.nombre}`;
+                studentInfoDiv.style.display = 'block';
+
+                // Llenar la tabla con los resultados
+                cursos.forEach(curso => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+                        <td>${curso.nombre}</td>
+                        <td>${curso.cargaHoraria} horas</td>
+                        <td>${curso.fecha}</td>
+                        <td>
+                            <a href="${curso.enlaceCertificado}" target="_blank" class="verify-btn">
+                                Ver Certificado
+                            </a>
+                        </td>
+                    `;
+
+                    tbody.appendChild(row);
+                });
+
+                // Mostrar la tabla
+                table.style.display = 'table';
+                messageDiv.textContent = `Se encontraron ${cursos.length} certificado(s)`;
+                messageDiv.className = 'success';
+            } else {
+                messageDiv.textContent = searchType === 'dni'
+                    ? 'No se encontraron certificados para el DNI ingresado'
+                    : 'No se encontraron certificados para el nombre ingresado. Verifique que el nombre esté completo y correctamente escrito.';
+                messageDiv.className = 'error';
+            }
+        }
+
+        document.getElementById('search-btn').addEventListener('click', searchCertificates);
+        
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchCertificates();
+            }
+        });
+
+        document.querySelectorAll('input[name="search-type"]').forEach(radio => {
+            radio.addEventListener('change', updateSearchPlaceholder);
+        });
+
+        document.querySelectorAll('.verify-btn').forEach(btn => {
+            btn.style.touchAction = 'manipulation';
+        });
+
+        updateSearchPlaceholder();
+    </script>
+</body>
+</html>
